@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import axios from "axios"
+import axios from "axios";
+
+// ✅ Use environment variable
+const BASE_API = import.meta.env.VITE_BASE_API;
+
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("")
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -12,10 +16,10 @@ const Login = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-     try {
-      const res = await axios.post("http://localhost:3000/user/login", form);
+    try {
+      const res = await axios.post(`${BASE_API}/user/login`, form);
       console.log("✅ Login successful", res.data.user);
 
       setMessage("Login successful!");
@@ -24,7 +28,6 @@ const Login = () => {
       console.log("❌ " + (err.response?.data?.message || "Login failed"));
       setMessage("❌ " + (err.response?.data?.message || "Login failed"));
     }
-  
   };
 
   const handleGoogleSuccess = (credentialResponse) => {
@@ -109,7 +112,7 @@ const Login = () => {
             </span>
           </p>
         </div>
-         {message && (
+        {message && (
           <p className="mt-4 text-center text-sm text-red-500">{message}</p>
         )}
       </div>

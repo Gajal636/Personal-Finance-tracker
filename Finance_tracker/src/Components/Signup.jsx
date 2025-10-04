@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
-import axios from "axios"
+import axios from "axios";
+
+// ✅ Use environment variable
+const BASE_API = import.meta.env.VITE_BASE_API;
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -18,21 +21,21 @@ const Signup = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit =async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirm) {
       alert("Passwords do not match!");
       return;
     }
-    try{
-    const res = await axios.post("http://localhost:3000/user/signup", {
+    try {
+      const res = await axios.post(`${BASE_API}/user/signup`, {
         username: form.username,
         email: form.email,
         password: form.password,
         confirm: form.confirm, // backend expects "confirm"
       });
-  
-alert(res.data.message || "Account created successfully!");
+
+      alert(res.data.message || "Account created successfully!");
       setForm({ username: "", email: "", password: "", confirm: "" });
       navigate("/login");
     } catch (err) {
@@ -40,7 +43,6 @@ alert(res.data.message || "Account created successfully!");
       alert(err.response?.data?.message || "Signup failed, try again.");
     }
   };
-
 
   const handleGoogleSuccess = (credentialResponse) => {
     console.log("Google user info:", credentialResponse);
